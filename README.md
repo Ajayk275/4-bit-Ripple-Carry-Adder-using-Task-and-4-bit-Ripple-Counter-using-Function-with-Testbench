@@ -8,39 +8,39 @@ Computer with Vivado or any Verilog simulation software.
 Verilog HDL compiler.
 
 // Verilog Code
-module ripple_carry_adder_4bit (
-    input [3:0] A,      // 4-bit input A
-    input [3:0] B,      // 4-bit input B
-    input Cin,          // Carry input
-    output [3:0] Sum,   // 4-bit Sum output
-    output Cout         // Carry output
-);
+```
+module task_ripple_adder(a,b,cin,sum,cout);
+input [3:0]a;
+input [3:0]b;
+input cin;
+reg [3:0]sum_adder;
 
-    reg [3:0] sum_temp;
-    reg cout_temp;
+reg [2:0]carry_out;
+output  [3:0]sum;
+output reg cout;
 
-    // Task for Full Adder
-    task full_adder;
-        input a, b, cin;
-        output sum, cout;
-        begin
-            sum = a ^ b ^ cin;
-            cout = (a & b) | (b & cin) | (cin & a);
-        end
-    endtask
+task full_adder;
+input A,B,Cin;
+output Sum,Cout;
+begin
+     Sum=A^B^Cin;
+     Cout=(A&B)|(B&Cin)|(Cin&A);
+end
+endtask
+always @(*)
+begin
+full_adder(a[0],b[0],cin,sum_adder[0],carry_out[0]);
+full_adder(a[1],b[1],carry_out[0],sum_adder[1],carry_out[1]);
+full_adder(a[2],b[2],carry_out[1],sum_adder[2],carry_out[2]);
+full_adder(a[3],b[3],carry_out[2],sum_adder[3],cout);
+end
+assign sum=sum_adder;
 
-    // Ripple carry logic using task
-    always @(*) begin
-        full_adder(A[0], B[0], Cin, sum_temp[0], cout_temp);
-        full_adder(A[1], B[1], cout_temp, sum_temp[1], cout_temp);
-        full_adder(A[2], B[2], cout_temp, sum_temp[2], cout_temp);
-        full_adder(A[3], B[3], cout_temp, sum_temp[3], Cout);
-    end
 
-    assign Sum = sum_temp;
 
+  
 endmodule
-
+```
 
 // Test bench for Ripple carry adder
 
@@ -88,6 +88,7 @@ endmodule
 
 
 // Verilog Code ripple counter
+```
 
 module ripple_counter_4bit (
     input clk,           // Clock signal
@@ -112,6 +113,7 @@ module ripple_counter_4bit (
     end
 
 endmodule
+```
 
 // TestBench
 
@@ -148,6 +150,12 @@ module ripple_counter_4bit_tb;
     end
 
 endmodule
+
+Output:
+4-bit Ripple Carry Adder:
+
+![Screenshot (128)](https://github.com/user-attachments/assets/aeb16816-51b1-4f95-a913-1074bead733a)
+
 
 Conclusion:
 The 4-bit Ripple Carry Adder was successfully designed and implemented using Verilog HDL with the help of a task for the full adder logic. The testbench verified that the ripple carry adder correctly computes the 4-bit sum and carry-out for various input combinations. The simulation results matched the expected outputs.
